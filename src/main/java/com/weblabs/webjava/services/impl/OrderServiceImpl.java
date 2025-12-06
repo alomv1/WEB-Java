@@ -53,9 +53,6 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public void deleteOrder(UUID orderId) {
-        if (!orderRepo.containsKey(orderId)) {
-            throw new NoSuchElementException("Order not found with id: " + orderId);
-        }
         orderRepo.remove(orderId);
     }
 }

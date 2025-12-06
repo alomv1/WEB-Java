@@ -45,9 +45,6 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public void deleteCategory(UUID id) {
-        if (!categoryRepo.containsKey(id)) {
-            throw new NoSuchElementException("Category not found with id: " + id);
-        }
         categoryRepo.remove(id);
     }
 }

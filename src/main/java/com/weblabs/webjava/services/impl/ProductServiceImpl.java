@@ -46,9 +46,6 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public void deleteProduct(UUID id) {
-        if (!productRepo.containsKey(id)) {
-            throw new NoSuchElementException("Product not found with id: " + id);
-        }
         productRepo.remove(id);
     }
 }
