@@ -146,6 +146,11 @@
                         <exclude>**/repository/**</exclude>
                         <exclude>**/WebJavaApplication.class</exclude>
                         <exclude>**/config/**</exclude>
+
+                        <exclude>**/dto/**</exclude>
+                        <exclude>**/mapper/**</exclude>
+                        <exclude>**/annotation/**</exclude>
+                        <exclude>**/aspect/**</exclude>
                     </excludes>
                 </configuration>
                 <executions>

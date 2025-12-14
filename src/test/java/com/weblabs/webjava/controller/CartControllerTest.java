@@ -51,7 +51,7 @@ class CartControllerTest {
         Mockito.when(cartService.addItemToCart(any(), any(), any(Integer.class))).thenReturn(new Cart());
         Mockito.when(cartMapper.toDto(any())).thenReturn(new CartDTO());
 
-        mockMvc.perform(post("/api/carts/{userId}/items", userId)
+        mockMvc.perform(post("/api/carts/{userId}/items", userId) // Перевірте URL
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(itemDTO)))
                 .andExpect(status().isOk());
@@ -75,5 +75,17 @@ class CartControllerTest {
                 .andExpect(status().isNoContent());
 
         Mockito.verify(cartService).clearCart(userId);
+    }
+
+    @Test
+    void removeItemFromCart_ShouldReturnOk() throws Exception {
+        UUID userId = UUID.randomUUID();
+        UUID productId = UUID.randomUUID();
+
+        Mockito.when(cartService.removeItemFromCart(userId, productId)).thenReturn(new Cart());
+        Mockito.when(cartMapper.toDto(any())).thenReturn(new CartDTO());
+
+        mockMvc.perform(delete("/api/carts/{userId}/items/{productId}", userId, productId))
+                .andExpect(status().isOk());
     }
 }
