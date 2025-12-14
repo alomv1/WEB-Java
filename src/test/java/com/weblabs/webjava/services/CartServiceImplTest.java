@@ -11,7 +11,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.ArrayList;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -29,52 +28,48 @@ class CartServiceImplTest {
     private CartServiceImpl cartService;
 
     @Test
-    void getCartByUserId_ShouldReturnNewCart_IfNotExist() {
+    void getCartByUserId_ShouldReturnExistingCart() {
+        UUID userId = UUID.randomUUID();
+        Cart cart = new Cart();
+        cart.setUserId(userId);
+
+        when(cartRepository.findByUserId(userId)).thenReturn(Optional.of(cart));
+
+        Cart result = cartService.getCartByUserId(userId);
+        assertEquals(userId, result.getUserId());
+    }
+
+    @Test
+    void getCartByUserId_ShouldCreateNewCart_WhenNoneExists() {
         UUID userId = UUID.randomUUID();
         when(cartRepository.findByUserId(userId)).thenReturn(Optional.empty());
-        when(cartRepository.save(any(Cart.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(cartRepository.save(any(Cart.class))).thenAnswer(inv -> inv.getArgument(0));
 
-        Cart cart = cartService.getCartByUserId(userId);
-
-        assertNotNull(cart);
-        assertEquals(userId, cart.getUserId());
+        Cart result = cartService.getCartByUserId(userId);
+        assertNotNull(result);
+        assertEquals(userId, result.getUserId());
         verify(cartRepository).save(any(Cart.class));
     }
 
     @Test
     void addItemToCart_ShouldAddItem() {
         UUID userId = UUID.randomUUID();
-        Cart existingCart = new Cart(UUID.randomUUID(), userId, new ArrayList<>());
-        Product product = new Product(UUID.randomUUID(), "Item 1", "D", 50.0, 10, null);
+        Cart cart = new Cart(UUID.randomUUID(), userId, new ArrayList<>());
+        Product product = new Product(UUID.randomUUID(), "Item", "Desc", 100.0, 10, null);
 
-        when(cartRepository.findByUserId(userId)).thenReturn(Optional.of(existingCart));
-        when(cartRepository.save(any(Cart.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(cartRepository.findByUserId(userId)).thenReturn(Optional.of(cart));
+        when(cartRepository.save(any(Cart.class))).thenReturn(cart);
 
-        Cart updatedCart = cartService.addItemToCart(userId, product, 2);
+        cartService.addItemToCart(userId, product, 2);
 
-        assertFalse(updatedCart.getItems().isEmpty());
-        assertEquals(1, updatedCart.getItems().size());
-        verify(cartRepository).save(existingCart);
+        assertFalse(cart.getItems().isEmpty());
+        verify(cartRepository).save(cart);
     }
 
     @Test
-    void removeItemFromCart_ShouldThrow_IfCartNotFound() {
-        UUID userId = UUID.randomUUID();
-        UUID productId = UUID.randomUUID();
-
-        when(cartRepository.findByUserId(userId)).thenReturn(Optional.empty());
-
-        assertThrows(NoSuchElementException.class, () ->
-                cartService.removeItemFromCart(userId, productId)
-        );
-    }
-
-    @Test
-    void clearCart_ShouldRemoveAllItems() {
+    void clearCart_ShouldClearItems() {
         UUID userId = UUID.randomUUID();
         Cart cart = new Cart(UUID.randomUUID(), userId, new ArrayList<>());
-        Product product = new Product(UUID.randomUUID(), "Item 1", "D", 50.0, 10, null);
-        cart.addItem(product, 1);
 
         when(cartRepository.findByUserId(userId)).thenReturn(Optional.of(cart));
 

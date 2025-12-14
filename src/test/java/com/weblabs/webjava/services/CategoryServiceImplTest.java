@@ -9,8 +9,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Collections;
-import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -25,63 +24,75 @@ class CategoryServiceImplTest {
     private CategoryRepository repository;
 
     @InjectMocks
-    private CategoryServiceImpl categoryService;
+    private CategoryServiceImpl service;
 
     @Test
     void createCategory_ShouldSave() {
         Category category = new Category();
-        when(repository.save(any(Category.class))).thenReturn(category);
+        when(repository.save(any())).thenReturn(category);
 
-        Category result = categoryService.createCategory(category);
-
+        Category result = service.createCategory(category);
         assertNotNull(result);
-        verify(repository).save(category);
     }
 
     @Test
-    void getCategoryById_ShouldReturnCategory() {
+    void getCategoryById_ShouldReturn_WhenExists() {
         UUID id = UUID.randomUUID();
         Category category = new Category();
         when(repository.findById(id)).thenReturn(Optional.of(category));
 
-        Category result = categoryService.getCategoryById(id);
+        Category result = service.getCategoryById(id);
+        assertEquals(category, result);
+    }
 
-        assertNotNull(result);
+    @Test
+    void getCategoryById_ShouldThrow_WhenMissing() {
+        UUID id = UUID.randomUUID();
+        when(repository.findById(id)).thenReturn(Optional.empty());
+
+        assertThrows(NoSuchElementException.class, () -> service.getCategoryById(id));
     }
 
     @Test
     void getAllCategories_ShouldReturnList() {
-        when(repository.findAll()).thenReturn(Collections.emptyList());
-
-        List<Category> result = categoryService.getAllCategories();
-
-        assertNotNull(result);
+        service.getAllCategories();
         verify(repository).findAll();
     }
 
     @Test
-    void updateCategory_ShouldUpdate() {
+    void updateCategory_ShouldUpdate_WhenExists() {
         UUID id = UUID.randomUUID();
         Category category = new Category();
-
-
         when(repository.existsById(id)).thenReturn(true);
-        when(repository.save(any(Category.class))).thenReturn(category);
+        when(repository.save(any())).thenReturn(category);
 
-        Category result = categoryService.updateCategory(id, category);
-
-        assertNotNull(result);
+        service.updateCategory(id, category);
         assertEquals(id, category.getId());
     }
 
     @Test
-    void deleteCategory_ShouldDelete() {
+    void updateCategory_ShouldThrow_WhenMissing() {
         UUID id = UUID.randomUUID();
+        when(repository.existsById(id)).thenReturn(false);
 
+        assertThrows(NoSuchElementException.class, () -> service.updateCategory(id, new Category()));
+    }
+
+    @Test
+    void deleteCategory_ShouldDelete_WhenExists() {
+        UUID id = UUID.randomUUID();
         when(repository.existsById(id)).thenReturn(true);
 
-        categoryService.deleteCategory(id);
-
+        service.deleteCategory(id);
         verify(repository).deleteById(id);
+    }
+
+    @Test
+    void deleteCategory_ShouldIgnore_WhenMissing() {
+        UUID id = UUID.randomUUID();
+        when(repository.existsById(id)).thenReturn(false);
+
+        service.deleteCategory(id);
+        verify(repository, never()).deleteById(any());
     }
 }
