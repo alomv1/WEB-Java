@@ -142,13 +142,14 @@
                 <configuration>
                     <excludes>
                         <exclude>**/domain/**</exclude>
-                        <exclude>**/WebJavaApplication.class</exclude>
+                        <exclude>**/repository/**</exclude> <exclude>**/WebJavaApplication.class</exclude>
                         <exclude>**/config/**</exclude>
-
                         <exclude>**/dto/**</exclude>
                         <exclude>**/mapper/**</exclude>
                         <exclude>**/annotation/**</exclude>
+
                         <exclude>**/aspect/**</exclude>
+                        <exclude>**/validation/**</exclude>
                     </excludes>
                 </configuration>
                 <executions>
