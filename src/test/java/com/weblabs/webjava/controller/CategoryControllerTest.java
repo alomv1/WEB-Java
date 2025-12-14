@@ -60,7 +60,6 @@ class CategoryControllerTest {
                 .andExpect(status().isOk());
     }
 
-    // === ДОДАНІ ТЕСТИ ===
     @Test
     void getCategoryById_ShouldReturnOk() throws Exception {
         UUID id = UUID.randomUUID();
