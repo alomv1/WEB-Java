@@ -142,8 +142,6 @@
                 <configuration>
                     <excludes>
                         <exclude>**/domain/**</exclude>
-                        <exclude>**/exception/**</exclude>
-                        <exclude>**/repository/**</exclude>
                         <exclude>**/WebJavaApplication.class</exclude>
                         <exclude>**/config/**</exclude>
 
