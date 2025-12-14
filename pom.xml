@@ -141,8 +141,7 @@
                 <version>0.8.11</version>
                 <configuration>
                     <excludes>
-                        <exclude>**/domain/**</exclude>
-                        <exclude>**/repository/**</exclude> <exclude>**/WebJavaApplication.class</exclude>
+                        <exclude>**/WebJavaApplication.class</exclude>
                         <exclude>**/config/**</exclude>
                         <exclude>**/dto/**</exclude>
                         <exclude>**/mapper/**</exclude>
