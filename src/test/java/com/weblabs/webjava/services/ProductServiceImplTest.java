@@ -1,64 +1,113 @@
 package com.weblabs.webjava.services;
 
-import com.weblabs.webjava.domain.Product;
+import com.weblabs.webjava.entity.Product;
+import com.weblabs.webjava.repository.ProductRepository;
 import com.weblabs.webjava.services.impl.ProductServiceImpl;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
+@ExtendWith(MockitoExtension.class)
 class ProductServiceImplTest {
 
+    @Mock
+    private ProductRepository repository;
+
+    @InjectMocks
     private ProductServiceImpl productService;
 
-    @BeforeEach
-    void setUp() {
-        productService = new ProductServiceImpl();
+    @Test
+    void createProduct_ShouldSaveAndReturn() {
+        Product product = new Product();
+        product.setName("Test");
+        when(repository.save(any(Product.class))).thenReturn(product);
+
+        Product result = productService.createProduct(product);
+
+        assertNotNull(result);
+        verify(repository).save(product);
     }
 
     @Test
-    void createProduct_ShouldReturnProductWithId() {
-        Product product = new Product(null, "Test Product", "Desc", 100.0, 10, null);
-        Product created = productService.createProduct(product);
+    void getProductById_ShouldReturnProduct_WhenExists() {
+        UUID id = UUID.randomUUID();
+        Product product = new Product();
+        when(repository.findById(id)).thenReturn(Optional.of(product));
 
-        assertNotNull(created.getId());
-        assertEquals("Test Product", created.getName());
+        Product result = productService.getProductById(id);
+
+        assertEquals(product, result);
     }
 
     @Test
-    void getProductById_ShouldReturnProduct() {
-        Product product = new Product(null, "Test Product", "Desc", 100.0, 10, null);
-        Product created = productService.createProduct(product);
+    void getProductById_ShouldThrow_WhenNotFound() {
+        UUID id = UUID.randomUUID();
+        when(repository.findById(id)).thenReturn(Optional.empty());
 
-        Product found = productService.getProductById(created.getId());
-        assertEquals(created.getId(), found.getId());
+        assertThrows(NoSuchElementException.class, () -> productService.getProductById(id));
     }
 
     @Test
-    void getProductById_ShouldThrowException_WhenNotFound() {
-        assertThrows(NoSuchElementException.class, () -> productService.getProductById(UUID.randomUUID()));
+    void getAllProducts_ShouldReturnList() {
+        when(repository.findAll()).thenReturn(List.of(new Product()));
+
+        List<Product> result = productService.getAllProducts();
+
+        assertFalse(result.isEmpty());
     }
 
     @Test
-    void updateProduct_ShouldUpdateFields() {
-        Product product = productService.createProduct(new Product(null, "Old Name", "Desc", 100.0, 10, null));
-        UUID id = product.getId();
+    void updateProduct_ShouldUpdate_WhenExists() {
+        UUID id = UUID.randomUUID();
+        Product product = new Product();
 
-        Product updateInfo = new Product(null, "New Name", "Desc", 200.0, 5, null);
-        Product updated = productService.updateProduct(id, updateInfo);
+        when(repository.existsById(id)).thenReturn(true);
+        when(repository.save(any(Product.class))).thenReturn(product);
 
-        assertEquals("New Name", updated.getName());
-        assertEquals(200.0, updated.getPrice());
+        Product result = productService.updateProduct(id, product);
+
+        assertNotNull(result);
+        assertEquals(id, product.getId());
+        verify(repository).save(product);
     }
 
     @Test
-    void deleteProduct_ShouldRemoveProduct() {
-        Product product = productService.createProduct(new Product(null, "To Delete", "Desc", 100.0, 10, null));
-        productService.deleteProduct(product.getId());
+    void updateProduct_ShouldThrow_WhenNotExists() {
+        UUID id = UUID.randomUUID();
+        Product product = new Product();
+        when(repository.existsById(id)).thenReturn(false);
 
-        assertThrows(NoSuchElementException.class, () -> productService.getProductById(product.getId()));
+        assertThrows(NoSuchElementException.class, () -> productService.updateProduct(id, product));
+    }
+
+    @Test
+    void deleteProduct_ShouldDelete_WhenExists() {
+        UUID id = UUID.randomUUID();
+        when(repository.existsById(id)).thenReturn(true);
+
+        productService.deleteProduct(id);
+
+        verify(repository).deleteById(id);
+    }
+
+    @Test
+    void deleteProduct_ShouldDoNothing_WhenNotExists() {
+        UUID id = UUID.randomUUID();
+        when(repository.existsById(id)).thenReturn(false);
+
+        productService.deleteProduct(id);
+
+        verify(repository, never()).deleteById(id);
     }
 }

@@ -1,61 +1,98 @@
 package com.weblabs.webjava.services;
 
-import com.weblabs.webjava.domain.Category;
+import com.weblabs.webjava.entity.Category;
+import com.weblabs.webjava.repository.CategoryRepository;
 import com.weblabs.webjava.services.impl.CategoryServiceImpl;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
+@ExtendWith(MockitoExtension.class)
 class CategoryServiceImplTest {
 
-    private CategoryServiceImpl categoryService;
+    @Mock
+    private CategoryRepository repository;
 
-    @BeforeEach
-    void setUp() {
-        categoryService = new CategoryServiceImpl();
-    }
+    @InjectMocks
+    private CategoryServiceImpl service;
 
     @Test
-    void createCategory_ShouldAssignId() {
+    void createCategory_ShouldSave() {
         Category category = new Category();
-        category.setName("Electronics");
+        when(repository.save(any())).thenReturn(category);
 
-        Category saved = categoryService.createCategory(category);
-
-        assertNotNull(saved.getId());
-        assertEquals("Electronics", saved.getName());
+        Category result = service.createCategory(category);
+        assertNotNull(result);
     }
 
     @Test
-    void getCategoryById_ShouldThrow_IfNotFound() {
-        assertThrows(NoSuchElementException.class, () -> categoryService.getCategoryById(UUID.randomUUID()));
-    }
-
-    @Test
-    void updateCategory_ShouldUpdateData() {
+    void getCategoryById_ShouldReturn_WhenExists() {
+        UUID id = UUID.randomUUID();
         Category category = new Category();
-        category.setName("Old");
-        Category saved = categoryService.createCategory(category);
-        UUID id = saved.getId();
+        when(repository.findById(id)).thenReturn(Optional.of(category));
 
-        Category updateData = new Category();
-        updateData.setName("New");
-
-        Category updated = categoryService.updateCategory(id, updateData);
-        assertEquals("New", updated.getName());
+        Category result = service.getCategoryById(id);
+        assertEquals(category, result);
     }
 
     @Test
-    void deleteCategory_ShouldRemove() {
+    void getCategoryById_ShouldThrow_WhenMissing() {
+        UUID id = UUID.randomUUID();
+        when(repository.findById(id)).thenReturn(Optional.empty());
+
+        assertThrows(NoSuchElementException.class, () -> service.getCategoryById(id));
+    }
+
+    @Test
+    void getAllCategories_ShouldReturnList() {
+        service.getAllCategories();
+        verify(repository).findAll();
+    }
+
+    @Test
+    void updateCategory_ShouldUpdate_WhenExists() {
+        UUID id = UUID.randomUUID();
         Category category = new Category();
-        Category saved = categoryService.createCategory(category);
+        when(repository.existsById(id)).thenReturn(true);
+        when(repository.save(any())).thenReturn(category);
 
-        categoryService.deleteCategory(saved.getId());
+        service.updateCategory(id, category);
+        assertEquals(id, category.getId());
+    }
 
-        assertThrows(NoSuchElementException.class, () -> categoryService.getCategoryById(saved.getId()));
+    @Test
+    void updateCategory_ShouldThrow_WhenMissing() {
+        UUID id = UUID.randomUUID();
+        when(repository.existsById(id)).thenReturn(false);
+
+        assertThrows(NoSuchElementException.class, () -> service.updateCategory(id, new Category()));
+    }
+
+    @Test
+    void deleteCategory_ShouldDelete_WhenExists() {
+        UUID id = UUID.randomUUID();
+        when(repository.existsById(id)).thenReturn(true);
+
+        service.deleteCategory(id);
+        verify(repository).deleteById(id);
+    }
+
+    @Test
+    void deleteCategory_ShouldIgnore_WhenMissing() {
+        UUID id = UUID.randomUUID();
+        when(repository.existsById(id)).thenReturn(false);
+
+        service.deleteCategory(id);
+        verify(repository, never()).deleteById(any());
     }
 }

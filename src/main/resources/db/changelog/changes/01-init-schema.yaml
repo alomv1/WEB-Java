@@ -1,0 +1,65 @@
+databaseChangeLog:
+  - changeSet:
+      id: 01-create-categories
+      author: vlad
+      changes:
+        - createTable:
+            tableName: categories
+            columns:
+              - column:
+                  name: id
+                  type: uuid
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: description
+                  type: varchar(500)
+
+  - changeSet:
+      id: 02-create-products
+      author: vlad
+      changes:
+        - createTable:
+            tableName: products
+            columns:
+              - column:
+                  name: id
+                  type: uuid
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: description
+                  type: text
+              - column:
+                  name: price
+                  type: decimal(19, 2)
+              - column:
+                  name: category_id
+                  type: uuid
+                  constraints:
+                    foreignKeyName: fk_product_category
+                    references: categories(id)
+
+  - changeSet:
+      id: 03-add-product-index
+      author: vlad
+      changes:
+        - createIndex:
+            tableName: products
+            indexName: idx_product_name
+            columns:
+              - column:
+                  name: name

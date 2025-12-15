@@ -1,14 +1,30 @@
-package com.weblabs.webjava.domain;
+package com.weblabs.webjava.entity;
 
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.UUID;
+
+@Entity
 @Getter
 @Setter
 @NoArgsConstructor
 public class OrderItem {
+
+    @Id
+    @GeneratedValue
+    private UUID id;
+
+    @ManyToOne
+    @JoinColumn(name = "order_id")
+    private Order order;
+
+    @ManyToOne
+    @JoinColumn(name = "product_id")
     private Product product;
+
     private int quantity;
     private double price;
 

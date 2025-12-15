@@ -2,8 +2,8 @@ package com.weblabs.webjava.controller;
 
 import com.weblabs.webjava.dto.OrderDTO;
 import com.weblabs.webjava.mapper.OrderMapper;
-import com.weblabs.webjava.domain.Order;
-import com.weblabs.webjava.domain.Product;
+import com.weblabs.webjava.entity.Order;
+import com.weblabs.webjava.entity.Product;
 import com.weblabs.webjava.services.OrderService;
 import com.weblabs.webjava.services.ProductService;
 import jakarta.validation.Valid;

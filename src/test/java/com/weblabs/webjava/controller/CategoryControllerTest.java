@@ -1,7 +1,7 @@
 package com.weblabs.webjava.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.weblabs.webjava.domain.Category;
+import com.weblabs.webjava.entity.Category;
 import com.weblabs.webjava.dto.CategoryDTO;
 import com.weblabs.webjava.mapper.CategoryMapper;
 import com.weblabs.webjava.services.CategoryService;
@@ -14,9 +14,10 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
+import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
-
+import static org.mockito.ArgumentMatchers.eq;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -57,5 +58,40 @@ class CategoryControllerTest {
 
         mockMvc.perform(get("/api/categories"))
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    void getCategoryById_ShouldReturnOk() throws Exception {
+        UUID id = UUID.randomUUID();
+        Mockito.when(categoryService.getCategoryById(id)).thenReturn(new Category());
+        Mockito.when(categoryMapper.toDto(any())).thenReturn(new CategoryDTO());
+
+        mockMvc.perform(get("/api/categories/{id}", id))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void updateCategory_ShouldReturnOk() throws Exception {
+        UUID id = UUID.randomUUID();
+        CategoryDTO dto = new CategoryDTO();
+        dto.setName("Updated");
+
+        Mockito.when(categoryMapper.toDomain(any())).thenReturn(new Category());
+        Mockito.when(categoryService.updateCategory(eq(id), any())).thenReturn(new Category());
+        Mockito.when(categoryMapper.toDto(any())).thenReturn(dto);
+
+        mockMvc.perform(put("/api/categories/{id}", id)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void deleteCategory_ShouldReturnNoContent() throws Exception {
+        UUID id = UUID.randomUUID();
+        mockMvc.perform(delete("/api/categories/{id}", id))
+                .andExpect(status().isNoContent());
+
+        Mockito.verify(categoryService).deleteCategory(id);
     }
 }

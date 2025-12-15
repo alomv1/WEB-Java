@@ -1,7 +1,7 @@
 package com.weblabs.webjava.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.weblabs.webjava.domain.Product;
+import com.weblabs.webjava.entity.Product;
 import com.weblabs.webjava.dto.ProductDTO;
 import com.weblabs.webjava.mapper.ProductMapper;
 import com.weblabs.webjava.services.ProductService;

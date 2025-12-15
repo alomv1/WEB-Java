@@ -1,41 +1,78 @@
 package com.weblabs.webjava.services.impl;
 
+import com.weblabs.webjava.entity.Cart;
+import com.weblabs.webjava.entity.Product;
+import com.weblabs.webjava.exception.PersistenceException;
+import com.weblabs.webjava.repository.CartRepository;
 import com.weblabs.webjava.services.CartService;
-import com.weblabs.webjava.domain.Cart;
-import com.weblabs.webjava.domain.Product;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.NoSuchElementException;
+import java.util.UUID;
 
 @Service
+@Transactional
 public class CartServiceImpl implements CartService {
 
-    private final Map<UUID, Cart> cartRepo = new HashMap<>();
+    private final CartRepository repository;
+
+    public CartServiceImpl(CartRepository repository) {
+        this.repository = repository;
+    }
 
     @Override
     public Cart getCartByUserId(UUID userId) {
-        return cartRepo.getOrDefault(userId, new Cart(UUID.randomUUID(), userId, new ArrayList<>()));
+        try {
+            return repository.findByUserId(userId)
+                    .orElseGet(() -> {
+                        Cart newCart = new Cart(null, userId, new ArrayList<>());
+                        return repository.save(newCart);
+                    });
+        } catch (Exception e) {
+            throw new PersistenceException("Failed to fetch or create cart for user: " + userId, e);
+        }
     }
 
     @Override
     public Cart addItemToCart(UUID userId, Product product, int quantity) {
-        Cart cart = cartRepo.getOrDefault(userId, new Cart(UUID.randomUUID(), userId, new ArrayList<>()));
-        cart.addItem(product, quantity);
-        cartRepo.put(userId, cart);
-        return cart;
+        try {
+            Cart cart = getCartByUserId(userId);
+            cart.addItem(product, quantity);
+            return repository.save(cart);
+        } catch (Exception e) {
+            throw new PersistenceException("Failed to add item to cart for user: " + userId, e);
+        }
     }
 
     @Override
     public Cart removeItemFromCart(UUID userId, UUID productId) {
-        Cart cart = cartRepo.get(userId);
-        if (cart == null) throw new NoSuchElementException("Cart not found for userId: " + userId);
-        cart.removeItem(new Product(productId, null, null, 0, 0, null));
-        return cart;
+        try {
+            Cart cart = repository.findByUserId(userId)
+                    .orElseThrow(() -> new NoSuchElementException("Cart not found for userId: " + userId));
+
+            Product productToRemove = new Product();
+            productToRemove.setId(productId);
+
+            cart.removeItem(productToRemove);
+            return repository.save(cart);
+        } catch (NoSuchElementException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new PersistenceException("Failed to remove item from cart for user: " + userId, e);
+        }
     }
 
     @Override
     public void clearCart(UUID userId) {
-        Cart cart = cartRepo.get(userId);
-        if (cart != null) cart.clear();
+        try {
+            repository.findByUserId(userId).ifPresent(cart -> {
+                cart.clear();
+                repository.save(cart);
+            });
+        } catch (Exception e) {
+            throw new PersistenceException("Failed to clear cart for user: " + userId, e);
+        }
     }
 }

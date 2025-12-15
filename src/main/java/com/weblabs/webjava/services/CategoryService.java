@@ -1,6 +1,6 @@
 package com.weblabs.webjava.services;
 
-import com.weblabs.webjava.domain.Category;
+import com.weblabs.webjava.entity.Category;
 
 import java.util.List;
 import java.util.UUID;

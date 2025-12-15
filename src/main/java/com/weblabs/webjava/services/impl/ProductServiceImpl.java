@@ -1,51 +1,77 @@
 package com.weblabs.webjava.services.impl;
 
-import com.weblabs.webjava.domain.Product;
+import com.weblabs.webjava.entity.Product;
+import com.weblabs.webjava.exception.PersistenceException;
+import com.weblabs.webjava.repository.ProductRepository;
 import com.weblabs.webjava.services.ProductService;
-
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
+@Transactional
 public class ProductServiceImpl implements ProductService {
 
-    private final Map<UUID, Product> productRepo = new HashMap<>();
+    private final ProductRepository productRepository;
 
     @Override
     public Product createProduct(Product product) {
-        UUID id = UUID.randomUUID();
-        product.setId(id);
-        productRepo.put(id, product);
-        return product;
+        try {
+            return productRepository.save(product);
+        } catch (Exception e) {
+            throw new PersistenceException("Failed to create product", e);
+        }
     }
 
     @Override
     public Product getProductById(UUID id) {
-        Product product = productRepo.get(id);
-        if (product == null) {
-            throw new NoSuchElementException("Product not found with id: " + id);
+        try {
+            return productRepository.findById(id)
+                    .orElseThrow(() -> new NoSuchElementException("Product not found with id: " + id));
+        } catch (NoSuchElementException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new PersistenceException("Failed to fetch product with id: " + id, e);
         }
-        return product;
     }
 
     @Override
     public List<Product> getAllProducts() {
-        return new ArrayList<>(productRepo.values());
+        try {
+            return productRepository.findAll();
+        } catch (Exception e) {
+            throw new PersistenceException("Failed to fetch all products", e);
+        }
     }
 
     @Override
     public Product updateProduct(UUID id, Product product) {
-        if (!productRepo.containsKey(id)) {
-            throw new NoSuchElementException("Product not found with id: " + id);
+        try {
+            if (!productRepository.existsById(id)) {
+                throw new NoSuchElementException("Product not found with id: " + id);
+            }
+            product.setId(id);
+            return productRepository.save(product);
+        } catch (NoSuchElementException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new PersistenceException("Failed to update product with id: " + id, e);
         }
-        product.setId(id);
-        productRepo.put(id, product);
-        return product;
     }
 
     @Override
     public void deleteProduct(UUID id) {
-        productRepo.remove(id);
+        try {
+            if (productRepository.existsById(id)) {
+                productRepository.deleteById(id);
+            }
+        } catch (Exception e) {
+            throw new PersistenceException("Failed to delete product with id: " + id, e);
+        }
     }
 }

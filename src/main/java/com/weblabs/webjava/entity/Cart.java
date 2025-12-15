@@ -1,5 +1,6 @@
-package com.weblabs.webjava.domain;
+package com.weblabs.webjava.entity;
 
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,13 +10,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+@Entity
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class Cart {
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
+
     private UUID userId;
+
+    @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CartItem> items = new ArrayList<>();
 
     public void addItem(Product product, int quantity) {
@@ -23,10 +30,13 @@ public class Cart {
                 .filter(i -> i.getProduct().getId().equals(product.getId()))
                 .findFirst()
                 .orElse(null);
+
         if (existing != null) {
             existing.setQuantity(existing.getQuantity() + quantity);
         } else {
-            items.add(new CartItem(product, quantity));
+            CartItem newItem = new CartItem(product, quantity);
+            newItem.setCart(this);
+            items.add(newItem);
         }
     }
 
