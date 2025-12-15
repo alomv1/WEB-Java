@@ -3,7 +3,7 @@ package com.weblabs.webjava.mapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-import com.weblabs.webjava.domain.Product;
+import com.weblabs.webjava.entity.Product;
 import com.weblabs.webjava.dto.ProductDTO;
 
 @Mapper(componentModel = "spring")

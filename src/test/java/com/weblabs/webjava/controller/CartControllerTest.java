@@ -1,8 +1,8 @@
 package com.weblabs.webjava.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.weblabs.webjava.domain.Cart;
-import com.weblabs.webjava.domain.Product;
+import com.weblabs.webjava.entity.Cart;
+import com.weblabs.webjava.entity.Product;
 import com.weblabs.webjava.dto.CartDTO;
 import com.weblabs.webjava.dto.CartItemDTO;
 import com.weblabs.webjava.mapper.CartMapper;

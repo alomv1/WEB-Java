@@ -1,7 +1,7 @@
 package com.weblabs.webjava.services;
 
-import com.weblabs.webjava.domain.Order;
-import com.weblabs.webjava.domain.Product;
+import com.weblabs.webjava.entity.Order;
+import com.weblabs.webjava.entity.Product;
 import com.weblabs.webjava.repository.OrderRepository;
 import com.weblabs.webjava.services.impl.OrderServiceImpl;
 import org.junit.jupiter.api.Test;

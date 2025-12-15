@@ -1,6 +1,6 @@
 package com.weblabs.webjava.repository;
 
-import com.weblabs.webjava.domain.Product;
+import com.weblabs.webjava.entity.Product;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

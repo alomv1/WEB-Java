@@ -1,4 +1,4 @@
-package com.weblabs.webjava.domain;
+package com.weblabs.webjava.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

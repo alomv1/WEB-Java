@@ -1,6 +1,6 @@
 package com.weblabs.webjava.repository;
 
-import com.weblabs.webjava.domain.Product;
+import com.weblabs.webjava.entity.Product;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,7 +1,7 @@
 package com.weblabs.webjava.mapper;
 
-import com.weblabs.webjava.domain.Cart;
-import com.weblabs.webjava.domain.CartItem;
+import com.weblabs.webjava.entity.Cart;
+import com.weblabs.webjava.entity.CartItem;
 import com.weblabs.webjava.dto.CartDTO;
 import com.weblabs.webjava.dto.CartItemDTO;
 import org.mapstruct.*;

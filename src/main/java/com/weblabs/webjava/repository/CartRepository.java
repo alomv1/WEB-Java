@@ -1,6 +1,6 @@
 package com.weblabs.webjava.repository;
 
-import com.weblabs.webjava.domain.Cart;
+import com.weblabs.webjava.entity.Cart;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

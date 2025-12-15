@@ -1,7 +1,7 @@
 package com.weblabs.webjava.mapper;
 
-import com.weblabs.webjava.domain.Order;
-import com.weblabs.webjava.domain.OrderItem;
+import com.weblabs.webjava.entity.Order;
+import com.weblabs.webjava.entity.OrderItem;
 import com.weblabs.webjava.dto.OrderItemDTO;
 import com.weblabs.webjava.dto.OrderDTO;
 

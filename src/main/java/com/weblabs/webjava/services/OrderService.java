@@ -1,7 +1,7 @@
 package com.weblabs.webjava.services;
 
-import com.weblabs.webjava.domain.Order;
-import com.weblabs.webjava.domain.Product;
+import com.weblabs.webjava.entity.Order;
+import com.weblabs.webjava.entity.Product;
 
 import java.util.List;
 import java.util.UUID;

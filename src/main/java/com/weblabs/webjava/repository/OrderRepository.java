@@ -1,6 +1,6 @@
 package com.weblabs.webjava.repository;
 
-import com.weblabs.webjava.domain.Order;
+import com.weblabs.webjava.entity.Order;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

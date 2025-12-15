@@ -1,7 +1,7 @@
 package com.weblabs.webjava.mapper;
 
 import com.weblabs.webjava.dto.CategoryDTO;
-import com.weblabs.webjava.domain.Category;
+import com.weblabs.webjava.entity.Category;
 import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")

@@ -1,6 +1,6 @@
 package com.weblabs.webjava.services.impl;
 
-import com.weblabs.webjava.domain.Product;
+import com.weblabs.webjava.entity.Product;
 import com.weblabs.webjava.exception.PersistenceException;
 import com.weblabs.webjava.repository.ProductRepository;
 import com.weblabs.webjava.services.ProductService;

@@ -1,7 +1,7 @@
 package com.weblabs.webjava.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.weblabs.webjava.domain.Category;
+import com.weblabs.webjava.entity.Category;
 import com.weblabs.webjava.dto.CategoryDTO;
 import com.weblabs.webjava.mapper.CategoryMapper;
 import com.weblabs.webjava.services.CategoryService;

@@ -1,7 +1,7 @@
 package com.weblabs.webjava.services;
 
-import com.weblabs.webjava.domain.Cart;
-import com.weblabs.webjava.domain.Product;
+import com.weblabs.webjava.entity.Cart;
+import com.weblabs.webjava.entity.Product;
 import com.weblabs.webjava.exception.PersistenceException;
 import com.weblabs.webjava.repository.CartRepository;
 import com.weblabs.webjava.services.impl.CartServiceImpl;

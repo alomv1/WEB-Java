@@ -2,7 +2,7 @@ package com.weblabs.webjava.controller;
 
 import com.weblabs.webjava.dto.ProductDTO;
 import com.weblabs.webjava.mapper.ProductMapper;
-import com.weblabs.webjava.domain.Product;
+import com.weblabs.webjava.entity.Product;
 import com.weblabs.webjava.services.ProductService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;

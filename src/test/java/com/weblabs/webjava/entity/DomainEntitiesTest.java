@@ -1,4 +1,4 @@
-package com.weblabs.webjava.domain;
+package com.weblabs.webjava.entity;
 
 import org.junit.jupiter.api.Test;
 import java.time.LocalDateTime;
@@ -31,7 +31,7 @@ class DomainEntitiesTest {
         Product p2 = new Product(id, "Name", "Desc", 50.0, 5, cat);
         assertNotNull(p2);
 
-        assertNotEquals(p, new Product());
+        assertNotEquals(new Product(), p);
     }
 
     @Test

@@ -1,6 +1,6 @@
 package com.weblabs.webjava.services.impl;
 
-import com.weblabs.webjava.domain.Category;
+import com.weblabs.webjava.entity.Category;
 import com.weblabs.webjava.exception.PersistenceException;
 import com.weblabs.webjava.repository.CategoryRepository;
 import com.weblabs.webjava.services.CategoryService;

@@ -1,6 +1,7 @@
-package com.weblabs.webjava.domain;
+package com.weblabs.webjava.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -11,26 +12,24 @@ import java.util.UUID;
 @Getter
 @Setter
 @NoArgsConstructor
-public class OrderItem {
-
+@AllArgsConstructor
+public class CartItem {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
-
-    @ManyToOne
-    @JoinColumn(name = "order_id")
-    private Order order;
 
     @ManyToOne
     @JoinColumn(name = "product_id")
     private Product product;
 
     private int quantity;
-    private double price;
 
-    public OrderItem(Product product, int quantity) {
+    @ManyToOne
+    @JoinColumn(name = "cart_id")
+    private Cart cart;
+
+    public CartItem(Product product, int quantity) {
         this.product = product;
         this.quantity = quantity;
-        this.price = product.getPrice();
     }
 }

@@ -1,8 +1,8 @@
 package com.weblabs.webjava.services.impl;
 
-import com.weblabs.webjava.domain.Order;
-import com.weblabs.webjava.domain.OrderItem;
-import com.weblabs.webjava.domain.Product;
+import com.weblabs.webjava.entity.Order;
+import com.weblabs.webjava.entity.OrderItem;
+import com.weblabs.webjava.entity.Product;
 import com.weblabs.webjava.exception.PersistenceException;
 import com.weblabs.webjava.repository.OrderRepository;
 import com.weblabs.webjava.services.OrderService;
